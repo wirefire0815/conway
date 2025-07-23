@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #define HEIGHT 16
 #define WIDTH 16
 
 int display[HEIGHT][WIDTH] = {0};
-int next_display[HEIGHT][WIDTH] = {1};
+int next_display[HEIGHT][WIDTH] = {0};
 
 void printArray(int *arr) {
   for (int i = 0; i < (int)sizeof(arr) / sizeof(int); i++) {
@@ -22,8 +23,8 @@ void init_display() {
 }
 
 void print_current_display() {
-  for (int y = 0; y < WIDTH; ++y) {
-    for (int x = 0; x < HEIGHT; ++x) {
+  for (int y = 0; y < HEIGHT; ++y) {
+    for (int x = 0; x < WIDTH; ++x) {
       if (display[y][x]) {
         printf("X");
       } else {
@@ -34,13 +35,15 @@ void print_current_display() {
   }
 }
 
+int mod(int a, int b) { return (a % b + b) % b; }
+
 int count_neighbours(int cx, int cy) {
   int count = 0;
-  for (int dy = -1; dy <= 1; ++dy) {
-    for (int dx = -1; dx <= 1; ++dx) {
+  for (int dx = -1; dx <= 1; ++dx) {
+    for (int dy = -1; dy <= 1; ++dy) {
       if (!(dx == 0 && dx == 0)) {
-        int x = (cx + dx) % HEIGHT;
-        int y = (cy + dy) % WIDTH;
+        int x = mod(cx + dx, WIDTH);
+        int y = mod(cy + dy, HEIGHT);
         if (display[y][x])
           count += 1;
       }
@@ -51,11 +54,11 @@ int count_neighbours(int cx, int cy) {
 
 void next_step() {
   int is_alive;
-  for (int y = 0; y < WIDTH; ++y) {
-    for (int x = 0; x < HEIGHT; ++x) {
+  for (int y = 0; y < HEIGHT; ++y) {
+    for (int x = 0; x < WIDTH; ++x) {
       int neighbours = count_neighbours(x, y);
       if (display[y][x]) {
-        next_display[y][x] = (neighbours == 3 || neighbours == 3);
+        next_display[y][x] = (neighbours == 3 || neighbours == 2);
       } else {
         next_display[y][x] = neighbours == 3;
       }
@@ -65,9 +68,12 @@ void next_step() {
 
 int main(int argc, char *argv[]) {
   init_display();
-  print_current_display();
-  next_step();
-  memcpy(display, next_display, sizeof(display));
-  printf("----------------------------------\n");
-  print_current_display();
+
+  for (;;) {
+    print_current_display();
+    next_step();
+    memcpy(display, next_display, sizeof(display));
+    printf("----------------------------------\n");
+    usleep(100 * 1000);
+  }
 }
