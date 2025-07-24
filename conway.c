@@ -41,7 +41,7 @@ int count_neighbours(int cx, int cy) {
   int count = 0;
   for (int dx = -1; dx <= 1; ++dx) {
     for (int dy = -1; dy <= 1; ++dy) {
-      if (!(dx == 0 && dx == 0)) {
+      if (!(dx == 0 && dy == 0)) {
         int x = mod(cx + dx, WIDTH);
         int y = mod(cy + dy, HEIGHT);
         if (display[y][x])
@@ -53,7 +53,6 @@ int count_neighbours(int cx, int cy) {
 }
 
 void next_step() {
-  int is_alive;
   for (int y = 0; y < HEIGHT; ++y) {
     for (int x = 0; x < WIDTH; ++x) {
       int neighbours = count_neighbours(x, y);
@@ -74,6 +73,6 @@ int main(int argc, char *argv[]) {
     next_step();
     memcpy(display, next_display, sizeof(display));
     printf("----------------------------------\n");
-    usleep(100 * 1000);
+    usleep(100 * 10000);
   }
 }
