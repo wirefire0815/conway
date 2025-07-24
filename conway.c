@@ -5,6 +5,16 @@
 #define HEIGHT 16
 #define WIDTH 16
 
+typedef struct {
+  int display[HEIGHT][WIDTH];
+} Frame;
+
+typedef struct {
+  Frame current;
+  Frame *next;
+  // add previous too
+} Slide; // come up with a better name
+
 int display[HEIGHT][WIDTH] = {0};
 int next_display[HEIGHT][WIDTH] = {0};
 
@@ -67,6 +77,8 @@ void next_step() {
 
 int main(int argc, char *argv[]) {
   init_display();
+
+  // do the linked list shenanigans
 
   for (;;) {
     print_current_display();
