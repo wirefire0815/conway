@@ -1,5 +1,5 @@
 @echo off
-gcc conway.c -o conway.exe
+gcc -Wall -Wextra conway.c -o conway.exe
 
 if errorlevel 1 (
     echo Fehler
