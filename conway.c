@@ -7,7 +7,7 @@
 #define WIDTH 16
 
 typedef struct {
-  // int number;
+  int number;
   int display[HEIGHT][WIDTH];
 } Frame;
 
@@ -17,11 +17,13 @@ struct Node {
   // add previous too
 }; // come up with a better name
 
+static int numerator = 0;
+
 int display[HEIGHT][WIDTH] = {0};
 int next_display[HEIGHT][WIDTH] = {0};
 
 void init_node(struct Node *node) {
-  // node->head.number = 0;
+  node->head.number = numerator++;
   node->next = NULL;
 
   memset(node->head.display, 0, sizeof(node->head.display));
@@ -94,6 +96,24 @@ void print_all_frames(struct Node *node) {
   }
 }
 
+void delete_frame(struct Node **node, int index) {
+  struct Node *cur_n = *node;
+
+  if (index == 0) {
+    *node = cur_n->next;
+    free(cur_n);
+
+  } else {
+    while (cur_n->head.number != index - 1) {
+      cur_n = cur_n->next;
+    }
+
+    struct Node *old_n = cur_n->next;
+    cur_n->next = cur_n->next->next;
+    free(old_n);
+  }
+}
+
 int main() {
 
   struct Node *node = malloc(sizeof(struct Node));
@@ -106,8 +126,12 @@ int main() {
   node->head.display[2][1] = 1;
   node->head.display[2][2] = 1;
 
-  calc_next_frame(node);
+  for (int i = 0; i < 5; ++i) {
+    calc_next_frame(node);
+  }
   // print_display(node->next->head);
+
+  delete_frame(&node, 0);
 
   print_all_frames(node);
 
@@ -117,6 +141,6 @@ int main() {
       calc_next_step();
       memcpy(display, next_display, sizeof(display));
       printf("----------------------------------\n");
-      unodeeep(100 * 10000);
+      unosleep(100 * 10000);
     }*/
 }
